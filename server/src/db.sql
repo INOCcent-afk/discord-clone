@@ -1,6 +1,6 @@
 CREATE TABLE "discordUser" (
     id SERIAL PRIMARY KEY,
-    uid INTEGER NOT NULL,
+    uid VARCHAR(255) NOT NULL,
     email VARCHAR(255),
     username VARCHAR(255)
 );

@@ -3,6 +3,7 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import config from "./utils/config";
+import userRouter from "./routers/userRouter/userRouter";
 
 const app = express();
 const router = express.Router();
@@ -31,8 +32,7 @@ app.use(function (req, res, next) {
 });
 
 // Routers
-// router.use("/user", userRouter);
-// router.use("/tweet", tweetRouter);
+router.use("/user", userRouter);
 app.use("/api/v1", router); // Default starting url
 
 const PORT = 8000 || process.env.PORT;
