@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const Home = () => {
 	const navigate = useNavigate();
-	const { setSignedIn } = useAuth();
+	const { setSignedIn, user } = useAuth();
 	// firebase auth
 	const auth = getAuth();
 
@@ -35,7 +35,7 @@ const Home = () => {
 					<Dropdown />
 				</div>
 				<div className="flex flex-col items-center gap-3">
-					<h3>Dave Inoc</h3>
+					{user && <h3>{user.username}</h3>}
 					<button
 						onClick={signOutClick}
 						className="bg-red-800 flex items-center justify-center px-4 py-2 rounded-lg w-full"

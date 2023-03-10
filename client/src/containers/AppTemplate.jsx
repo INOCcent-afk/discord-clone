@@ -8,7 +8,7 @@ import Home from "../pages/Home";
 import { useAuth } from "../context/AuthContext";
 
 function AppTemplate() {
-	const { setToken, isSignedIn, setSignedIn } = useAuth();
+	const { setToken, isSignedIn, setSignedIn, setUser } = useAuth();
 
 	// firebase auth
 	const auth = getAuth();
@@ -19,11 +19,16 @@ function AppTemplate() {
 		try {
 			const { user } = await signInWithPopup(auth, provider);
 
-			await axios.post("http://localhost:8000/api/v1/user/register", {
-				uid: user.uid,
-				email: user.email,
-				username: user.displayName,
-			});
+			const result = await axios.post(
+				"http://localhost:8000/api/v1/user/register",
+				{
+					uid: user.uid,
+					email: user.email,
+					username: user.displayName,
+				}
+			);
+
+			setUser(result.data);
 		} catch (error) {
 			console.log(error);
 		}
