@@ -13,17 +13,17 @@ userRouter.post("/register", async (req, res) => {
 		);
 
 		if (user.rows.length) {
-			return res.send("SUCCESS");
+			return res.status(200).send(user.rows[0]);
 		}
 
-		await pool.query(
+		const createdUser = await pool.query(
 			`INSERT INTO "discordUser" (uid, email, username) VALUES ($1, $2, $3) RETURNING id`,
 			[uid, email, username]
 		);
 
-		return res.send("SUCCESS");
+		return res.status(201).send(createdUser.rows[0]);
 	} catch (error) {
-		console.log(error);
+		res.status(400).send("FAILED TO LOGIN");
 	}
 });
 
