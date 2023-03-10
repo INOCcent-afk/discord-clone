@@ -1,17 +1,14 @@
 import "./App.css";
-import {
-	getAuth,
-	signInWithRedirect,
-	onAuthStateChanged,
-	signInWithPopup,
-} from "firebase/auth";
+import { getAuth, onAuthStateChanged, signInWithPopup } from "firebase/auth";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
 
 function App() {
-	const [stateAuth, setStateAuth] = useState(
+	const [isSignedIn, setSignedIn] = useState(
 		false || window.localStorage.getItem("auth") === "true"
 	);
 	const [token, setToken] = useState("");
@@ -37,7 +34,7 @@ function App() {
 	useEffect(() => {
 		onAuthStateChanged(auth, async (user) => {
 			if (user) {
-				setStateAuth(true);
+				setSignedIn(true);
 				window.localStorage.setItem("auth", "true");
 				const token = await user.getIdToken();
 
@@ -47,10 +44,18 @@ function App() {
 	}, []);
 
 	return (
-		<div className="App">
-			<header className="App-header">
-				<button onClick={loginWithGoogle}>Hello</button>
-			</header>
+		<div>
+			{isSignedIn ? (
+				<Routes>
+					<Route path="/" element={<Home />} />
+				</Routes>
+			) : (
+				<div className="App">
+					<header className="App-header">
+						<button onClick={loginWithGoogle}>Hello</button>
+					</header>
+				</div>
+			)}
 		</div>
 	);
 }
