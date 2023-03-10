@@ -2,8 +2,28 @@ import React from "react";
 import Dropdown from "../components/Dropdown";
 import ScrollToBottom from "react-scroll-to-bottom";
 import Message from "../components/Message";
+import { getAuth, signOut } from "firebase/auth";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+	const navigate = useNavigate();
+	const { setSignedIn } = useAuth();
+	// firebase auth
+	const auth = getAuth();
+
+	const signOutClick = async () => {
+		signOut(auth)
+			.then(() => {
+				window.localStorage.removeItem("auth");
+				setSignedIn(false);
+
+				navigate("/");
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
 	return (
 		<div className="flex bg-gray-900 h-screen w-full">
 			<div className="flex flex-col justify-between h-full border-r w-full max-w-[300px] border-r-gray-600 p-4">
@@ -16,14 +36,17 @@ const Home = () => {
 				</div>
 				<div className="flex flex-col items-center gap-3">
 					<h3>Dave Inoc</h3>
-					<button className="bg-red-800 flex items-center justify-center px-4 py-2 rounded-lg w-full">
+					<button
+						onClick={signOutClick}
+						className="bg-red-800 flex items-center justify-center px-4 py-2 rounded-lg w-full"
+					>
 						Sign out
 					</button>
 				</div>
 			</div>
 			<div className="flex flex-col p-2 h-full w-full justify-between gap-2">
-				<ScrollToBottom className="h-full max-h-full overflow-auto border border-gray-600 rounded-md p-4">
-					<div className="flex flex-col gap-4 self-end w-full h-full ">
+				<ScrollToBottom className="h-full max-h-full overflow-auto border border-gray-600 rounded-md py-4">
+					<div className="flex flex-col gap-4 self-end w-full h-full px-4">
 						<Message
 							id={1}
 							username="Dave inoc"
