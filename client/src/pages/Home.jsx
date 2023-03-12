@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Dropdown from "../components/Dropdown";
 import ScrollToBottom from "react-scroll-to-bottom";
 import Message from "../components/Message";
 import { getAuth, signOut } from "firebase/auth";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
-import useSocket from "../hooks/useSocket";
+// import useSocket from "../hooks/useSocket";
 import axios from "axios";
+import { SocketContext } from "../context/SocketContext";
 
 const Home = () => {
 	const [rooms, setRooms] = useState([]);
@@ -19,8 +20,9 @@ const Home = () => {
 	const { setSignedIn, user } = useAuth();
 	// firebase auth
 	const auth = getAuth();
-	const { socket } = useSocket();
+	// const { socket } = useSocket();
 	const params = useParams();
+	const { socket } = useContext(SocketContext);
 
 	const getRoom = async () => {
 		const data = await axios.get("http://localhost:8000/api/v1/room/");
@@ -108,19 +110,23 @@ const Home = () => {
 	useEffect(() => {
 		if (!socket) return;
 
-		socket.on("update_rooms", (data) => {
+		const updateRooms = (data) => {
 			setRooms(data);
 			console.log(data);
-		});
+		};
 
-		socket.on("update_messages", (data) => {
+		const updateMessages = (data) => {
 			setMessages(data);
 			console.log(data);
-		});
+		};
+
+		socket.on("update_rooms", updateRooms);
+
+		socket.on("update_messages", updateMessages);
 
 		return () => {
-			socket.removeListener("update_rooms");
-			socket.removeListener("update_messages");
+			socket.off("update_rooms", updateRooms);
+			socket.off("update_messages", updateMessages);
 		};
 	}, [socket]);
 
@@ -160,7 +166,7 @@ const Home = () => {
 			)}
 
 			<div className="flex flex-col justify-between h-full border-r w-full max-w-[300px] border-r-gray-600 p-4">
-				<div className="flex flex-col gap-4">
+				<div className="flex flex-col gap-4 max-h-full overflow-auto">
 					<button
 						onClick={() => setModal(true)}
 						className="bg-blue-900 py-2 px-4 rounded-lg hover:bg-blue-800"
