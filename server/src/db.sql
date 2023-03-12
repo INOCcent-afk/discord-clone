@@ -13,6 +13,14 @@ CREATE TABLE "room" (
     FOREIGN KEY (roomAdminId) REFERENCES "discordUser"(id)
 );
 
+CREATE TABLE "discordUserRooms" (
+    userId INTEGER NOT NULL,
+    roomId INTEGER NOT NULL,
+
+    FOREIGN KEY (userId) REFERENCES "discordUser"(id),
+    FOREIGN KEY (roomId) REFERENCES "room"(id)
+);
+
 CREATE TABLE "message" (
     id SERIAL PRIMARY KEY,
     message VARCHAR(255),
@@ -29,3 +37,19 @@ INSERT INTO "discordUser" (uid, email, username) VALUES ($1, $2, $3);
 INSERT INTO "room" (name, roomAdminId) VALUES ("room-1", 1);
 
 INSERT INTO "message" (message, userId, roomId) VALUES ("Hi Server!", 1, "");
+
+SELECT room.id, room.name, roomAdminId, array_agg(username) AS members FROM room 
+LEFT JOIN "discordUserRooms" 
+ON "discordUserRooms".roomId = room.id
+LEFT JOIN "discordUser"
+ON "discordUser".id = "discordUserRooms".userId
+GROUP BY room.id;
+
+SELECT room.id, room.name, roomAdminId, 
+json_agg(json_build_object('id', "discordUser".id,'username', username)) AS members 
+FROM room 
+LEFT JOIN "discordUserRooms" 
+ON "discordUserRooms".roomId = room.id
+LEFT JOIN "discordUser"
+ON "discordUser".id = "discordUserRooms".userId
+GROUP BY room.id;

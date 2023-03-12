@@ -29,6 +29,7 @@ function AppTemplate() {
 			);
 
 			setUser(result.data);
+			window.localStorage.setItem("user", JSON.stringify(result.data));
 		} catch (error) {
 			console.log(error);
 		}
@@ -51,6 +52,7 @@ function AppTemplate() {
 			{isSignedIn ? (
 				<Routes>
 					<Route path="/" element={<Home />} />
+					<Route path="/:id" element={<Home />} />
 				</Routes>
 			) : (
 				<div className="App">

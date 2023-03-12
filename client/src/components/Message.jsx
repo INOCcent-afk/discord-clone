@@ -1,14 +1,21 @@
 import React from "react";
+import { useAuth } from "../context/AuthContext";
 
 const Message = ({ id, username, message, time }) => {
+	const { user } = useAuth();
+
 	return (
 		<div
-			className={`w-fit max-w-[300px] ${id === 1 ? "ml-auto text-right" : ""}`}
+			className={`w-fit max-w-[300px] ${
+				id === user.id ? "ml-auto text-right" : ""
+			}`}
 		>
-			{id !== 1 && <span className="text-sm text-gray-400">{username}</span>}
+			{id !== user.id && (
+				<span className="text-sm text-gray-400">{username}</span>
+			)}
 			<div
-				className={` px-4 py-2 rounded-lg ${
-					id === 1 ? "bg-blue-700" : "bg-green-600"
+				className={` px-4 py-2 rounded-lg text-left ${
+					id === user.id ? "bg-blue-700" : "bg-green-600"
 				}`}
 			>
 				{message}

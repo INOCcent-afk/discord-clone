@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 
 export const AuthContext = createContext({
-	user: null,
+	user: null || JSON.parse(window.localStorage.getItem("user")),
 	setUser: null,
 	isSignedIn: false || window.localStorage.getItem("auth") === "true",
 	setSignedIn: null,
@@ -10,7 +10,9 @@ export const AuthContext = createContext({
 });
 
 export const AuthProvider = ({ children }) => {
-	const [user, setUser] = useState(null);
+	const [user, setUser] = useState(
+		null || JSON.parse(window.localStorage.getItem("user"))
+	);
 	const [isSignedIn, setSignedIn] = useState(
 		false || window.localStorage.getItem("auth") === "true"
 	);
